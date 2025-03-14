@@ -42,9 +42,9 @@ class BlockTable:
 
     def __init__(
         self,
-        block_size: int,
-        block_allocator: DeviceAwareBlockAllocator,
-        _blocks: Optional[List[Block]] = None,
+        block_size: int, # 한 block에 저장할 수 있는 토큰 수
+        block_allocator: DeviceAwareBlockAllocator, # 블록 할당자
+        _blocks: Optional[List[Block]] = None, # 블록 리스트
         max_block_sliding_window: Optional[int] = None,
     ):
         self._block_size = block_size
@@ -56,6 +56,7 @@ class BlockTable:
         self._max_block_sliding_window = max_block_sliding_window
         self._num_full_slots = self._get_num_token_ids()
 
+   
     @staticmethod
     def get_num_required_blocks(token_ids: List[int],
                                 block_size: int,
@@ -80,6 +81,9 @@ class BlockTable:
         """
         return cdiv(len(token_ids) + num_lookahead_slots, block_size)
 
+    '''
+    처음으로 block을 할당 -> 해당 시퀀스 저장
+    '''
     def allocate(self,
                  token_ids: List[int],
                  device: Device = Device.GPU,
@@ -284,6 +288,7 @@ class BlockTable:
             token_ids: List[int],
             device: Device,
             extra_hash: Optional[int] = None) -> List[Block]:
+        # import pdb; pdb.set_trace()
         blocks: List[Block] = []
 
         block_token_ids = []
@@ -312,7 +317,7 @@ class BlockTable:
             block.append_token_ids(cur_token_ids)
 
             blocks.append(block)
-
+        # import pdb; pdb.set_trace()
         return blocks
 
     def _get_all_token_ids(self) -> List[int]:

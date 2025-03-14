@@ -18,6 +18,7 @@ llm = LLM(
     # use_v2_block_manager=True,
     disable_log_stats=False,
     # enforce_eager=True,
+    enable_prefix_caching = True,
 )
 
 # import pdb; pdb.set_trace()
