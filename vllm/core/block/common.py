@@ -34,14 +34,14 @@ class RefCounter(RefCounterProtocol):
             to initialize the reference counter with.
     """
 
-    def __init__(self, all_block_indices: Iterable[BlockId]):
+    def __init__(self, all_block_indices: Iterable[BlockId]): # ok
         deduped = set(all_block_indices)
         self._refcounts: Dict[BlockId, RefCount] = {
             index: 0
             for index in deduped
         }
 
-    def incr(self, block_id: BlockId) -> RefCount:
+    def incr(self, block_id: BlockId) -> RefCount: # ok
         assert block_id in self._refcounts
         pre_incr_refcount = self._refcounts[block_id]
 
@@ -51,7 +51,7 @@ class RefCounter(RefCounterProtocol):
         self._refcounts[block_id] = post_incr_refcount
         return post_incr_refcount
 
-    def decr(self, block_id: BlockId) -> RefCount:
+    def decr(self, block_id: BlockId) -> RefCount: # ok
         assert block_id in self._refcounts
         refcount = self._refcounts[block_id]
 
@@ -62,11 +62,11 @@ class RefCounter(RefCounterProtocol):
 
         return refcount
 
-    def get(self, block_id: BlockId) -> RefCount:
+    def get(self, block_id: BlockId) -> RefCount: # ok
         assert block_id in self._refcounts
         return self._refcounts[block_id]
 
-    def as_readonly(self) -> "ReadOnlyRefCounter":
+    def as_readonly(self) -> "ReadOnlyRefCounter": # ok
         return ReadOnlyRefCounter(self)
 
 
@@ -85,13 +85,13 @@ class ReadOnlyRefCounter(RefCounterProtocol):
     def __init__(self, refcounter: RefCounter):
         self._refcounter = refcounter
 
-    def incr(self, block_id: BlockId) -> RefCount:
+    def incr(self, block_id: BlockId) -> RefCount: # ok
         raise ValueError("Incr not allowed")
 
-    def decr(self, block_id: BlockId) -> RefCount:
+    def decr(self, block_id: BlockId) -> RefCount: # ok
         raise ValueError("Decr not allowed")
 
-    def get(self, block_id: BlockId) -> RefCount:
+    def get(self, block_id: BlockId) -> RefCount: # ok
         return self._refcounter.get(block_id)
 
 
@@ -111,7 +111,7 @@ class CopyOnWriteTracker:
         self._copy_on_writes: List[Tuple[BlockId, BlockId]] = []
         self._refcounter = refcounter
 
-    def is_appendable(self, block: Block) -> bool:
+    def is_appendable(self, block: Block) -> bool: # ok
         """Checks if the block is shared or not. If shared, then it cannot
         be appended and needs to be duplicated via copy-on-write
         """
@@ -123,7 +123,7 @@ class CopyOnWriteTracker:
         return refcount <= 1
 
     def record_cow(self, src_block_id: Optional[BlockId],
-                   trg_block_id: Optional[BlockId]) -> None:
+                   trg_block_id: Optional[BlockId]) -> None: # ok
         """Records a copy-on-write operation from source to target block id
         Args:
             src_block_id (BlockId): The source block id from which to copy 
@@ -135,7 +135,7 @@ class CopyOnWriteTracker:
         assert trg_block_id is not None
         self._copy_on_writes.append((src_block_id, trg_block_id))
 
-    def clear_cows(self) -> List[Tuple[BlockId, BlockId]]:
+    def clear_cows(self) -> List[Tuple[BlockId, BlockId]]: # ok
         """Clears the copy-on-write tracking information and returns the current
         state.
 
