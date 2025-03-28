@@ -165,7 +165,7 @@ class BlockPool:
     """
 
     def __init__(self, block_size: int, create_block: Block.Factory,
-                 allocator: BlockAllocator, pool_size: int):
+                 allocator: BlockAllocator, pool_size: int): #ok
         self._block_size = block_size
         self._create_block = create_block
         self._allocator = allocator
@@ -183,7 +183,7 @@ class BlockPool:
                                    block_id=None,
                                    extra_hash=None))
 
-    def increase_pool(self):
+    def increase_pool(self): #ok
         """Doubles the internal pool size
         """
         cur_pool_size = self._pool_size
@@ -206,7 +206,7 @@ class BlockPool:
                    token_ids: List[int],
                    block_size: int,
                    physical_block_id: Optional[int],
-                   extra_hash: Optional[int] = None) -> Block:
+                   extra_hash: Optional[int] = None) -> Block: #ok
         if len(self._free_ids) == 0:
             self.increase_pool()
             assert len(self._free_ids) > 0
@@ -224,7 +224,7 @@ class BlockPool:
         block.pool_id = pool_id  # type: ignore[attr-defined]
         return block
 
-    def free_block(self, block: Block) -> None:
+    def free_block(self, block: Block) -> None: #ok
         self._free_ids.appendleft(block.pool_id)  # type: ignore[attr-defined]
 
 
@@ -235,22 +235,22 @@ class BlockList:
     list on every iteration of the block manager
     """
 
-    def __init__(self, blocks: List[Block]):
+    def __init__(self, blocks: List[Block]): #ok
         self._blocks: List[Block] = []
         self._block_ids: List[int] = []
 
         self.update(blocks)
 
-    def _add_block_id(self, block_id: Optional[BlockId]) -> None:
+    def _add_block_id(self, block_id: Optional[BlockId]) -> None: #ok
         assert block_id is not None
         self._block_ids.append(block_id)
 
     def _update_block_id(self, block_index: int,
-                         new_block_id: Optional[BlockId]) -> None:
+                         new_block_id: Optional[BlockId]) -> None: #ok
         assert new_block_id is not None
         self._block_ids[block_index] = new_block_id
 
-    def update(self, blocks: List[Block]):
+    def update(self, blocks: List[Block]): #ok
         self._blocks = blocks
 
         # Cache block ids for fast query
@@ -258,7 +258,7 @@ class BlockList:
         for block in self._blocks:
             self._add_block_id(block.block_id)
 
-    def append_token_ids(self, block_index: int, token_ids: List[int]) -> None:
+    def append_token_ids(self, block_index: int, token_ids: List[int]) -> None: #ok
         block = self._blocks[block_index]
         prev_block_id = block.block_id
 
@@ -268,28 +268,28 @@ class BlockList:
         if prev_block_id != block.block_id:
             self._update_block_id(block_index, block.block_id)
 
-    def append(self, new_block: Block):
+    def append(self, new_block: Block): #ok
         self._blocks.append(new_block)
         self._add_block_id(new_block.block_id)
 
-    def __len__(self) -> int:
+    def __len__(self) -> int: #ok
         return len(self._blocks)
 
-    def __getitem__(self, block_index: int) -> Block:
+    def __getitem__(self, block_index: int) -> Block: #ok
         return self._blocks[block_index]
 
-    def __setitem__(self, block_index: int, new_block: Block) -> None:
+    def __setitem__(self, block_index: int, new_block: Block) -> None: #ok
         self._blocks[block_index] = new_block
         self._update_block_id(block_index, new_block.block_id)
 
-    def reset(self):
+    def reset(self): #ok
         self._blocks = []
         self._block_ids = []
 
-    def list(self) -> List[Block]:
+    def list(self) -> List[Block]: #ok
         return self._blocks
 
-    def ids(self) -> List[int]:
+    def ids(self) -> List[int]: #ok
         return self._block_ids
 
 

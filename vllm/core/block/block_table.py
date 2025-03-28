@@ -40,13 +40,13 @@ class BlockTable:
             blocks.
     """
 
-    def __init__(
+    def __init__( # ok
         self,
         block_size: int, # 한 block에 저장할 수 있는 토큰 수
         block_allocator: DeviceAwareBlockAllocator, # 블록 할당자
         _blocks: Optional[List[Block]] = None, # 블록 리스트
         max_block_sliding_window: Optional[int] = None,
-    ):
+    ): 
         self._block_size = block_size
         self._allocator = block_allocator
         if _blocks is None:
@@ -60,7 +60,7 @@ class BlockTable:
     @staticmethod
     def get_num_required_blocks(token_ids: List[int],
                                 block_size: int,
-                                num_lookahead_slots: int = 0) -> int:
+                                num_lookahead_slots: int = 0) -> int: # ok
         """Calculates the minimum number of blocks required to store a given
         sequence of token IDs along with any look-ahead slots that may be
         required (like in multi-step + chunked-prefill).
@@ -87,7 +87,7 @@ class BlockTable:
     def allocate(self,
                  token_ids: List[int],
                  device: Device = Device.GPU,
-                 extra_hash: Optional[int] = None) -> None:
+                 extra_hash: Optional[int] = None) -> None: # ok
         """Allocates memory blocks for storing the given sequence of token IDs.
 
         This method allocates the required number of blocks to store the given
@@ -110,7 +110,7 @@ class BlockTable:
         self.update(blocks)
         self._num_full_slots = len(token_ids)
 
-    def update(self, blocks: List[Block]) -> None:
+    def update(self, blocks: List[Block]) -> None: # ok
         """Resets the table to the newly provided blocks 
         (with their corresponding block ids)
         """
@@ -120,7 +120,7 @@ class BlockTable:
                          token_ids: List[int],
                          num_lookahead_slots: int = 0,
                          num_computed_slots: Optional[int] = None,
-                         extra_hash: Optional[int] = None) -> None:
+                         extra_hash: Optional[int] = None) -> None: # ok
         """Appends a sequence of token IDs to the existing blocks in the
         BlockTable.
 
@@ -178,7 +178,7 @@ class BlockTable:
 
     def ensure_num_empty_slots(self,
                                num_empty_slots: int,
-                               extra_hash: Optional[int] = None) -> None:
+                               extra_hash: Optional[int] = None) -> None: # ok
         """Ensures that the BlockTable has at least the specified number of
         empty slots available.
 
@@ -212,7 +212,7 @@ class BlockTable:
                     device=device,
                     extra_hash=extra_hash))
 
-    def fork(self) -> "BlockTable":
+    def fork(self) -> "BlockTable": # ok
         """Creates a new BlockTable instance with a copy of the blocks from the
         current instance.
 
@@ -235,7 +235,7 @@ class BlockTable:
             max_block_sliding_window=self._max_block_sliding_window,
         )
 
-    def free(self) -> None:
+    def free(self) -> None: # ok
         """Frees the memory occupied by the blocks in the BlockTable.
 
         This method iterates over all the blocks in the `_blocks` list and calls
@@ -248,7 +248,7 @@ class BlockTable:
         self._blocks.reset()
 
     @property
-    def physical_block_ids(self) -> List[int]:
+    def physical_block_ids(self) -> List[int]: # ok
         """Returns a list of physical block indices for the blocks in the
         BlockTable.
 
@@ -263,7 +263,7 @@ class BlockTable:
         """
         return self._blocks.ids()
 
-    def get_unseen_token_ids(self, sequence_token_ids: List[int]) -> List[int]:
+    def get_unseen_token_ids(self, sequence_token_ids: List[int]) -> List[int]: # ok
         """Get the number of "unseen" tokens in the sequence.
 
         Unseen tokens are tokens in the sequence corresponding to this block
@@ -287,7 +287,7 @@ class BlockTable:
             prev_block: Optional[Block],
             token_ids: List[int],
             device: Device,
-            extra_hash: Optional[int] = None) -> List[Block]:
+            extra_hash: Optional[int] = None) -> List[Block]: # ok
         # import pdb; pdb.set_trace()
         blocks: List[Block] = []
 
@@ -320,7 +320,7 @@ class BlockTable:
         # import pdb; pdb.set_trace()
         return blocks
 
-    def _get_all_token_ids(self) -> List[int]:
+    def _get_all_token_ids(self) -> List[int]: # ok
         # NOTE: This function is O(seq_len); use sparingly.
         token_ids: List[int] = []
 
@@ -383,7 +383,7 @@ class BlockTable:
         return num_token_blocks
 
     def _chunk_token_blocks_for_append(
-            self, token_ids: List[int]) -> List[List[int]]:
+            self, token_ids: List[int]) -> List[List[int]]: # ok
         """Split the token ids into block-sized chunks so they can be easily
         appended to blocks. The first such "token block" may have less token ids
         than the block size, since the last allocated block may be partially
